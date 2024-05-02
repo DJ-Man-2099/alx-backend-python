@@ -1,7 +1,9 @@
 from typing import Tuple, List
+"""3rd Optional Task"""
 
 
 def zoom_array(lst: Tuple, factor: int = 2) -> List:
+    """takes a tuple of integers and returns a list."""
     zoomed_in: list = [
         item for item in lst
         for i in range(int(factor))
