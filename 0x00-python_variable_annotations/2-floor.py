@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""2nd Task"""
+"""3rd Task"""
 
 
 import math
