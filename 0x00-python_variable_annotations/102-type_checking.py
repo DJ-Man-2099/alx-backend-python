@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-'''
-type-annotated function
-'''
-from typing import List, Tuple
+from typing import Tuple, List
+"""3rd Optional Task"""
 
 
 def zoom_array(lst: Tuple, factor: int = 2) -> List:
-    '''Creates multiple copies of items in a tuple.
-    '''
+    """takes a tuple of integers and returns a list."""
     zoomed_in: List = [
         item for item in lst
         for i in range(int(factor))
