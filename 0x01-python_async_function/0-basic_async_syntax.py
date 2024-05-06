@@ -2,7 +2,7 @@
 """1st Task"""
 
 from asyncio import sleep
-from random import uniform
+import random
 
 
 async def wait_random(max_delay: int = 10) -> float:
@@ -11,6 +11,6 @@ async def wait_random(max_delay: int = 10) -> float:
     that waits for a random delay
     between 0 and max_delay (included and float value) seconds
     and eventually returns it"""
-    wait_interval = uniform(0, max_delay)
+    wait_interval = random.random() * max_delay
     await sleep(wait_interval)
     return wait_interval
