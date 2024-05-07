@@ -6,7 +6,7 @@ import asyncio
 import typing
 
 
-async def async_generator() -> typing.AsyncGenerator[int, None]:
+async def async_generator() -> typing.Generator[int, None, None]:
     """coroutine will loop 10 times,
     each time asynchronously wait 1 second,
     then yield a random number between 0 and 10"""
