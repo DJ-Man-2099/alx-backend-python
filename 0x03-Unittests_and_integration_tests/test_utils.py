@@ -2,7 +2,7 @@
 """Testing Utils for Github ORG"""
 
 import json
-from typing import Any, Mapping, Sequence
+from typing import Any, Dict, Mapping, Sequence
 import unittest
 from unittest.mock import Mock, patch
 from parameterized import parameterized
@@ -44,9 +44,9 @@ class TestGetJson(unittest.TestCase):
         {"test_url": "http://holberton.io",
          "test_payload": {"payload": False}}
     ])
-    def test_get_json(self, test_url, test_payload):
+    def test_get_json(self, test_url: str, test_payload: Dict) -> None:
         """test that utils.get_json returns the expected result"""
-        with patch('requests.get') as mock_method:
+        with patch.object(requests, 'get') as mock_method:
             mock_method.return_value = Mock()
             mock_method.return_value.json = Mock(return_value=test_payload)
             result = get_json(test_url)
