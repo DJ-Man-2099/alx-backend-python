@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Testing Utils for Github ORG"""
 
+from typing import Dict
 import unittest
 from unittest.mock import MagicMock, PropertyMock, patch
 from parameterized import parameterized
@@ -50,3 +51,12 @@ class TestGithubOrgClient(unittest.TestCase):
 
             mock_url.assert_called_once()
             mock_get_json.assert_called_once_with("test")
+
+    @parameterized.expand([
+        ({"license": {"key": "my_license"}}, "my_license", True),
+        ({"license": {"key": "other_license"}}, "my_license", False),
+    ])
+    def test_has_license(self, repo: Dict, license_key: str, result: bool):
+        """unit-test GithubOrgClient.has_license"""
+        self.assertEqual(GithubOrgClient.has_license(
+            repo, license_key), result)
