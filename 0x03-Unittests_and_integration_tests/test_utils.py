@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Testing Utils for Github ORG"""
 
+import json
 from typing import Any, Mapping, Sequence
 import unittest
+from unittest.mock import Mock, patch
 from parameterized import parameterized
-from utils import access_nested_map
+from utils import access_nested_map, get_json
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -29,3 +31,20 @@ class TestAccessNestedMap(unittest.TestCase):
         """ test that a KeyError is raised for the following inputs"""
         with self.assertRaises(exception):
             access_nested_map(nested_map, path)
+
+
+class TestGetJson(unittest.TestCase):
+    """Testing get jeson function"""
+
+    @parameterized.expand([
+        {"test_url": "http://example.com",
+         "test_payload": {"payload": True}},
+        {"test_url": "http://holberton.io",
+         "test_payload": {"payload": False}}
+    ])
+    def test_get_json(self, test_url, test_payload):
+        """test that utils.get_json returns the expected result"""
+        with patch("requests.get") as mock_method:
+            mock_method.return_value = Mock()
+            mock_method.return_value.json = Mock(return_value=test_payload)
+            self.assertEqual(get_json(test_url), test_payload)
