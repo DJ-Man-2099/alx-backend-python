@@ -41,12 +41,10 @@ class TestGithubOrgClient(unittest.TestCase):
         ]
         names = list(
             map(lambda r: r["name"], mock_get_json.return_value))
-        # names = [r["name"]
-        #          for r in mock_get_json.return_value]
         with patch.object(GithubOrgClient, "_public_repos_url",
                           new_callable=PropertyMock) as mock_url:
             mock_url.return_value = "test"
             test_object = GithubOrgClient(org_name="Testing")
             self.assertListEqual(test_object.public_repos(), names)
-            mock_get_json.assert_called_once()
             mock_url.assert_called_once()
+            mock_get_json.assert_called_once_with("test")
