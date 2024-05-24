@@ -4,9 +4,11 @@
 from typing import Dict
 import unittest
 from unittest.mock import MagicMock, PropertyMock, patch
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
+import requests
 from client import GithubOrgClient, get_json
 import client
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -60,3 +62,26 @@ class TestGithubOrgClient(unittest.TestCase):
         """unit-test GithubOrgClient.has_license"""
         self.assertEqual(GithubOrgClient.has_license(
             repo, license_key), result)
+
+
+@parameterized_class(("org_payload", "repos_payload",
+                      "expected_repos", "apache2_repos"),
+                     TEST_PAYLOAD)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """test the GithubOrgClient.public_repos method in an integration test"""
+
+    @classmethod
+    def setUpClass(cls):
+        """mock requests.get to
+         return example payloads found in the fixtures"""
+        result = cls.repos_payload
+        cls.get_patcher = patch.object(
+            requests, "get",
+            side_effect=lambda url: MagicMock(
+                json=MagicMock(return_value=result)))
+        cls.get_patcher.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        """the tearDownClass class method to stop the patcher"""
+        cls.get_patcher.stop()
