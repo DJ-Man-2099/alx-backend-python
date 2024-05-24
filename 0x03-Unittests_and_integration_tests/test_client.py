@@ -33,20 +33,18 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(test_object._public_repos_url, "Test")
 
     @patch.object(client, "get_json")
-    def test_public_repos(self, mock_json: MagicMock):
+    def test_public_repos(self, mock_get_json: MagicMock):
         """unit-test GithubOrgClient.public_repos"""
-        json_payload = [{"name": "Google"}, {"name": "Twitter"}]
-        mock_json.return_value = json_payload
-
-        with patch('client.GithubOrgClient._public_repos_url',
-                   new_callable=PropertyMock) as mock_public:
-
-            mock_public.return_value = "hello/world"
-            test_class = GithubOrgClient('test')
-            result = test_class.public_repos()
-
-            check = [i["name"] for i in json_payload]
-            self.assertEqual(result, check)
-
-            mock_public.assert_called_once()
-            mock_json.assert_called_once()
+        mock_get_json.return_value = [
+            {"name": "Test 1"},
+            {"name": "Test 2"}
+        ]
+        names = list(
+            map(lambda r: r["name"], mock_get_json.return_value))
+        with patch.object(GithubOrgClient, "_public_repos_url",
+                          new_callable=PropertyMock) as mock_url:
+            mock_url.return_value = "test"
+            test_object = GithubOrgClient(org_name="Testing")
+            self.assertListEqual(test_object.public_repos(), names)
+            mock_url.assert_called_once()
+            mock_get_json.assert_called_once_with("test")
