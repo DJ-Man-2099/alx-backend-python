@@ -31,3 +31,22 @@ class TestGithubOrgClient(unittest.TestCase):
                           new_callable=PropertyMock) as property_mock:
             property_mock.return_value = {"repos_url": "Test"}
             self.assertEqual(test_object._public_repos_url, "Test")
+
+    @patch.object(client, "get_json")
+    def test_public_repos(self, mock_get_json: MagicMock):
+        """unit-test GithubOrgClient.public_repos"""
+        mock_get_json.return_value = [
+            {"name": "Test 1"},
+            {"name": "Test 2"}
+        ]
+        names = list(
+            map(lambda r: r["name"], mock_get_json.return_value))
+        # names = [r["name"]
+        #          for r in mock_get_json.return_value]
+        with patch.object(GithubOrgClient, "_public_repos_url",
+                          new_callable=PropertyMock) as mock_url:
+            mock_url.return_value = "test"
+            test_object = GithubOrgClient(org_name="Testing")
+            self.assertListEqual(test_object.public_repos(), names)
+            mock_get_json.assert_called_once()
+            mock_url.assert_called_once()
