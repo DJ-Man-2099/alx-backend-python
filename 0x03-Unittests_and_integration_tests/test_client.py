@@ -33,7 +33,7 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(test_object._public_repos_url, "Test")
 
     @patch.object(client, "get_json")
-    def test_public_repos(self, mock_get_json: MagicMock):
+    def test_public_repos(self, mock_get_json: MagicMock) -> None:
         """unit-test GithubOrgClient.public_repos"""
         mock_get_json.return_value = [
             {"name": "Test 1"},
