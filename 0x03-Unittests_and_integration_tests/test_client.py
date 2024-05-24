@@ -74,12 +74,22 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """mock requests.get to
          return example payloads found in the fixtures"""
-        result = cls.repos_payload
         cls.get_patcher = patch.object(
             requests, "get",
-            side_effect=lambda url: MagicMock(
-                json=MagicMock(return_value=result)))
+            side_effect=cls.resolve_url)
         cls.get_patcher.start()
+
+    @classmethod
+    def resolve_url(cls, url):
+        """resolves URL to get proper result"""
+        if 'orgs/' in url:
+            result = cls.org_payload
+        elif 'repos/' in url:
+            result = cls.repos_payload
+        else:
+            result = {}
+        return lambda url: MagicMock(
+            json=MagicMock(return_value=result))
 
     @classmethod
     def tearDownClass(cls):
