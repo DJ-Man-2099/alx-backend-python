@@ -36,7 +36,7 @@ class TestGithubOrgClient(unittest.TestCase):
         {"name": "Test 1"},
         {"name": "Test 2"}
     ])
-    def test_public_repos(self, mock_get_json):
+    def test_public_repos(self, mock_get_json: MagicMock):
         expected_repo_names = ["Test 1", "Test 2"]
 
         with patch.object(GithubOrgClient, "_public_repos_url",
