@@ -32,7 +32,7 @@ class TestGithubOrgClient(unittest.TestCase):
             property_mock.return_value = {"repos_url": "Test"}
             self.assertEqual(test_object._public_repos_url, "Test")
 
-    @patch('client.get_json', return_value=[
+    @patch.object(client, "get_json", return_value=[
         {"name": "Test 1"},
         {"name": "Test 2"}
     ])
