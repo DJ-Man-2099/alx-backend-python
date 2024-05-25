@@ -70,26 +70,18 @@ class TestGithubOrgClient(unittest.TestCase):
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """test the GithubOrgClient.public_repos method in an integration test"""
 
-    @ classmethod
+    @classmethod
     def setUpClass(cls):
         """mock requests.get to
          return example payloads found in the fixtures"""
+        result = cls.repos_payload
         cls.get_patcher = patch.object(
             requests, "get",
-            side_effect=lambda url: cls.resolve_url(url))
+            side_effect=lambda url: MagicMock(
+                json=MagicMock(return_value=result)))
         cls.get_patcher.start()
 
-    @ classmethod
-    def resolve_url(cls, url):
-        """returns the valid Fixture"""
-        if 'orgs/' in url:
-            return MagicMock(json=MagicMock(return_value=cls.org_payload))
-        elif 'repos/' in url:
-            return MagicMock(json=MagicMock(return_value=cls.repos_payload))
-        else:
-            return MagicMock(json=MagicMock(return_value={}))
-
-    @ classmethod
+    @classmethod
     def tearDownClass(cls):
         """the tearDownClass class method to stop the patcher"""
         cls.get_patcher.stop()
