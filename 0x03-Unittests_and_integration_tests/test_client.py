@@ -82,10 +82,11 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         #     requests, "get")
         # cls.get_patcher.return_value = MagicMock()
         # cls.get_patcher.return_value.json = MagicMock(side_effect=result)
-        config = {'return_value.json.side_effect':
+        config = {'json.side_effect':
                   result
                   }
-        cls.get_patcher = patch('requests.get', **config)
+        cls.get_patcher = patch('requests.get',)
+        cls.get_patcher.return_value = MagicMock(**config)
         cls.mock = cls.get_patcher.start()
 
     @classmethod
