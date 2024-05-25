@@ -88,7 +88,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch('requests.get')
         cls.get_patcher.return_value = MagicMock()
         cls.get_patcher.return_value.json = MagicMock(side_effect=result)
-        cls.mock = cls.get_patcher.start()
+        cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
