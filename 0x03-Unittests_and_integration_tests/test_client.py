@@ -74,7 +74,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """mock requests.get to
          return example payloads found in the fixtures"""
-        result = cls.repos_payload
+        result = [cls.org_payload, cls.repos_payload,]*2
         return_mock = MagicMock()
         return_mock.json = MagicMock(return_value=result)
         cls.get_patcher = patch.object(
