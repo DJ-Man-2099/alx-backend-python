@@ -74,20 +74,43 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """mock requests.get to
          return example payloads found in the fixtures"""
-        result = cls.repos_payload
-        cls.get_patcher = patch.object(
-            requests, "get")
-        # cls.get_patcher.return_value = MagicMock()
-        # cls.get_patcher.return_value.json = MagicMock(side_effect=result)
-        # config = {'json.side_effect':
-        #           result
-        #           }
-        # cls.get_patcher = patch('requests.get')
-        cls.get_patcher.return_value = MagicMock()
-        cls.get_patcher.return_value.json = MagicMock(side_effect=result)
-        cls.get_patcher.start()
+        def side_effect(url):
+            """return correct payload based on url"""
+            result = {}
+            if "/repos" in url:
+                result = cls.repos_payload
+            elif "orgs/" in url:
+                result = cls.org_payload
+            mock = MagicMock()
+            mock.json = MagicMock(return_value=result)
+            return mock
 
-    @classmethod
+        cls.get_patcher = patch.object(
+            requests, "get", side_effect=side_effect)
+        cls.mock = cls.get_patcher.start()
+
+    @ classmethod
     def tearDownClass(cls):
         """the tearDownClass class method to stop the patcher"""
         cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """test GithubOrgClient.public_repos"""
+        test_object = GithubOrgClient("google")
+        self.assertDictEqual(test_object.org, self.org_payload)
+        self.assertEqual(test_object._public_repos_url,
+                         self.org_payload["repos_url"])
+        self.assertEqual(test_object.repos_payload,
+                         self.repos_payload)
+        self.assertListEqual(test_object.public_repos(),
+                             self.expected_repos)
+        self.assertListEqual(test_object.public_repos("fake_licence"),
+                             [])
+        self.mock.assert_called()
+
+    def test_public_repos_with_license(self):
+        """test the public_repos with the argument license='apache-2.0'"""
+        test_object = GithubOrgClient("google")
+        self.assertListEqual(test_object.public_repos("apache-2.0"),
+                             self.apache2_repos)
+        self.mock.assert_called()
